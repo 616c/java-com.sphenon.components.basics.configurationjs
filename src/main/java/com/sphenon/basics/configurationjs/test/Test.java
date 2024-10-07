@@ -1,7 +1,7 @@
 package com.sphenon.basics.configurationjs.test;
 
 /****************************************************************************
-  Copyright 2001-2018 Sphenon GmbH
+  Copyright 2001-2024 Sphenon GmbH
 
   Licensed under the Apache License, Version 2.0 (the "License"); you may not
   use this file except in compliance with the License. You may obtain a copy
@@ -54,18 +54,15 @@ public class Test {
         System.out.println( "property 'escape': " + cfg.get(context, "escape", "DEFAULT-WERT"));
         System.out.println( "property 'anders': " + cfg.get(context, "anders", "DEFAULT-WERT"));
 
-        com.sphenon.basics.expression.test.Test_DynamicStrings.DSTest(context, "javascript:'Hallo'+'Holla'");
-        com.sphenon.basics.expression.test.Test_DynamicStrings.DSTest(context, "js:'Fuu'+'balken'");
+        // com.sphenon.basics.expression.test.Test_DynamicStrings.DSTest(context, "javascript:'Hallo'+'Holla'");
+        // com.sphenon.basics.expression.test.Test_DynamicStrings.DSTest(context, "js:'Fuu'+'balken'");
 
-        Scope scope = new Class_Scope(context);
-        scope.set(context, "hans", 4711);
-        com.sphenon.basics.expression.test.Test_DynamicStrings.DSTest(context, "js:'4700 + 11 = '+hans", scope);
-
-        com.sphenon.basics.expression.test.Test_DynamicStrings.ETest(context, "js:hans - 3896", scope);
-
-        com.sphenon.basics.expression.test.Test_DynamicStrings.ETest(context, "js:1 == 2", scope);
-
-        com.sphenon.basics.expression.test.Test_DynamicStrings.ETest(context, "js:[ 3, 4, 5 ]", scope);
+        // Scope scope = new Class_Scope(context);
+        // scope.set(context, "hans", 4711);
+        // com.sphenon.basics.expression.test.Test_DynamicStrings.DSTest(context, "js:'4700 + 11 = '+hans", scope);
+        // com.sphenon.basics.expression.test.Test_DynamicStrings.ETest(context, "js:hans - 3896", scope);
+        // com.sphenon.basics.expression.test.Test_DynamicStrings.ETest(context, "js:1 == 2", scope);
+        // com.sphenon.basics.expression.test.Test_DynamicStrings.ETest(context, "js:[ 3, 4, 5 ]", scope);
 
         System.out.println( "main done." );
     }

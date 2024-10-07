@@ -1,7 +1,7 @@
 package com.sphenon.basics.configurationjs;
 
 /****************************************************************************
-  Copyright 2001-2018 Sphenon GmbH
+  Copyright 2001-2024 Sphenon GmbH
 
   Licensed under the Apache License, Version 2.0 (the "License"); you may not
   use this file except in compliance with the License. You may obtain a copy
@@ -71,8 +71,17 @@ public class JavaScriptEvaluator implements ManagedResource {
 
     static {
         config = Configuration.create(RootContext.getInitialisationContext(), "com.sphenon.basics.configurationjs");
-        source_lines_regexp = new RegularExpression("^ *@sourceLines\\((?:(?:\"([^\"]+)\")|(?:'([^']+)')|(?:([A-Za-z0-9_]+)))\\) *(?s:;(.*))?");
+        source_lines_regexp = new RegularExpression(  "^ *@sourceLines\\("
+                                                    +   "(?:" 
+                                                    +     "(?:\"([^\"]+)\")"
+                                                    +     "|(?:'([^']+)')"
+                                                    +     "|(?:([A-Za-z0-9_]+))"
+                                                    +   ")"
+                                                    + "\\) *"
+                                                    + "(?s:;(.*))?");
         volatile_regexp  = new RegularExpression("^ *@volatile\\((?:(?:\"([^\"]+)\")|(?:'([^']+)')|(?:null)),(?:(?:\"([^\"]+)\")|(?:'([^']+)')|(?:null))\\) *");
+        unicode_on  = new RegularExpression("^ *(?:unicode|\u24CA) *(?::? *(?:true|\u2714))?"); // Ⓤ ✔
+        unicode_off = new RegularExpression("^ *(?:unicode|\u24CA) *:? *(?:false|\u2718)"); // Ⓤ ✘
         notification_level = NotificationLocationContext.getLevel(_class);
     }
 
@@ -123,6 +132,8 @@ public class JavaScriptEvaluator implements ManagedResource {
 
     static protected RegularExpression source_lines_regexp;
     static protected RegularExpression volatile_regexp;
+    static protected RegularExpression unicode_on;
+    static protected RegularExpression unicode_off;
 
     static protected class ScriptEntry {
         public org.mozilla.javascript.Script script;
@@ -191,8 +202,20 @@ public class JavaScriptEvaluator implements ManagedResource {
             this.stateful = true;
 
             int l=0;
+            boolean unicode = false;
             for (String line : lines) {
+                if (unicode_on.matches(context, line)) {
+                    unicode = true;
+                    continue;
+                }
+                if (unicode_off.matches(context, line)) {
+                    unicode = false;
+                    continue;
+                }
                 if ((notification_level & Notifier.DIAGNOSTICS) != 0) { NotificationContext.sendTrace(context, Notifier.DIAGNOSTICS, "JS line:  '%(line)'", "line", line); }
+                if (unicode) {
+                    line = DynamicString.process(context, line, "unicode");
+                }
                 result = doEvaluation(context, line, jsctx, jsscope, "line " + l + " in " + fnn);
                 if (result instanceof ExitCode) {
                     break;
